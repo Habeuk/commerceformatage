@@ -1,0 +1,232 @@
+<?php
+
+/**
+ *
+ * @file
+ * Primary module hooks for commerce formatage module.
+ *
+ * @DCG
+ * This file is no longer required in Drupal 8.
+ * @see https://www.drupal.org/node/2217931
+ */
+use Drupal\Core\Form\FormStateInterface;
+
+function commerceformatage_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // dump($form_id);
+}
+
+/**
+ *
+ * @param array $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param int $form_id
+ */
+function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  $entityTypeManger = \Drupal::entityTypeManager();
+  // Si l'utilisateur a selectionner un variante:
+  if ($form_state->has('selected_variation')) {
+    $selected_variation = $form_state->get('selected_variation');
+    /** @var \Drupal\commerce_product\Entity\ProductVariationInterface $selected_variation */
+    $selected_variation = $entityTypeManger->getStorage('commerce_product_variation')->load($selected_variation);
+  }
+  else {
+    $selected_variation = $form_state->get('product')->getDefaultVariation();
+  }
+  // add id off variation.
+  $form['commerce_product_variation_id'] = [
+    '#type' => 'hidden',
+    '#value' => $selected_variation->id()
+  ];
+  // disbled default submit
+  $form['actions']['submit']['#access'] = false;
+  // add custom submit
+  $form['actions']['custom_submit'] = [
+    '#type' => 'html_tag',
+    '#tag' => 'span',
+    '#attributes' => [
+      'class' => [
+        'd-flex',
+        'justify-content-center',
+        'align-items-center',
+        'btn',
+        'btn-primary',
+        'w-100',
+        'commerceformatage-button-add-to-cart'
+      ]
+    ],
+    [
+      '#type' => 'html_tag',
+      '#tag' => 'i',
+      '#attributes' => [
+        'class' => [
+          'fas',
+          'fa-cart-plus'
+        ]
+      ]
+    ],
+    [
+      '#type' => 'html_tag',
+      '#tag' => 'div',
+      '#attributes' => [
+        'class' => [
+          'px-4'
+        ]
+      ],
+      '#value' => $form['actions']['submit']['#value']
+    ],
+    [
+      '#type' => 'html_tag',
+      '#tag' => 'i',
+      '#attributes' => [
+        'class' => [
+          'fas',
+          'fa-spinner',
+          'loading',
+          'd-none'
+        ]
+      ]
+    ]
+  ];
+}
+
+/**
+ * Permet de surcharger la page panier.
+ *
+ * @param array $form
+ * @param FormStateInterface $form_state
+ * @param integer $form_id
+ */
+function commerceformatage_form_views_form_commerce_cart_form_default_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Add class container
+  if (!isset($form['#attributes']['class'])) {
+    $form['#attributes']['class'] = [];
+  }
+  $form['#attributes']['class'][] = 'container';
+  $form['#attributes']['class'][] = 'my-5';
+  $form['#attributes']['class'][] = 'table-td-align-middle';
+  $form['#attributes']['class'][] = 'cart-form';
+  // formatage des bouttons.
+  if (!empty($form['actions']['submit']) && !empty($form['actions']['checkout'])) {
+    // add icon in update cart
+    $form['actions']['submit']['#html_value'] = [
+      [
+        '#type' => 'html_tag',
+        '#tag' => 'i',
+        '#attributes' => [
+          'class' => [
+            'fas fa-cart-arrow-down'
+          ]
+        ]
+      ],
+      [
+        '#type' => 'html_tag',
+        '#tag' => 'span',
+        '#attributes' => [
+          'class' => [
+            'pl-3'
+          ]
+        ],
+        '#value' => $form['actions']['submit']['#value']
+      ]
+    ];
+    $form['actions']['submit']['#attributes'] = [
+      'class' => [
+        'w-auto',
+        'd-flex'
+      ],
+      'data-twig-suggestion' => 'commerce'
+    ];
+    // add icon in update checkout
+    $form['actions']['checkout']['#html_value'] = [
+      [
+        '#type' => 'html_tag',
+        '#tag' => 'span',
+        '#attributes' => [
+          'class' => [
+            'pr-3'
+          ]
+        ],
+        '#value' => $form['actions']['checkout']['#value']
+      ],
+      [
+        '#type' => 'html_tag',
+        '#tag' => 'i',
+        '#attributes' => [
+          'class' => [
+            'fas fa-angle-right'
+          ]
+        ]
+      ]
+    ];
+    $form['actions']['checkout']['#attributes'] = [
+      'class' => [
+        'w-auto'
+      ],
+      'data-twig-suggestion' => 'commerce'
+    ];
+    //
+    $form['actions']['container'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'div',
+      '#attributes' => [
+        'class' => [
+          'd-flex',
+          'justify-content-between',
+          'flex-wrap'
+        ]
+      ],
+      $form['actions']['submit'],
+      $form['actions']['checkout']
+    ];
+    // dump($form['actions']['submit']);
+    unset($form['actions']['checkout']);
+    unset($form['actions']['submit']);
+  }
+}
+
+/**
+ * On recupere la valeur du html.
+ *
+ * @param array $vars
+ */
+function commerceformatage_preprocess_input__submit__commerce(&$vars) {
+  $vars['safe_value_label'] = $vars['element']['#html_value'];
+}
+
+function commerceformatage_theme() {
+  $hooks['submit_commerce'] = [
+    'preprocess functions' => [
+      'template_preprocess_submit_commerce'
+    ],
+    'render element' => 'element',
+    'file' => 'commerceformatage.theme.inc'
+  ];
+  $hooks['commerceformatage_cart_bloc_count'] = [
+    'preprocess functions' => [
+      'template_preprocess_commerceformatage_cart_bloc_count'
+    ],
+    'render element' => 'element',
+    'file' => 'commerceformatage.theme.inc'
+  ];
+  return $hooks;
+}
+
+/**
+ *
+ * @param
+ *        $suggestions
+ * @param array $variables
+ */
+function commerceformatage_theme_suggestions_input_alter(&$suggestions, array $variables) {
+  $element = $variables['element'];
+  if (isset($element['#attributes']['data-twig-suggestion'])) {
+    $suggestions[] = 'input__' . $element['#type'] . '__' . $element['#attributes']['data-twig-suggestion'];
+  }
+  else {
+    $parents = !empty($element['#parents']) ? $element['#parents'] : null;
+    if ($parents && in_array('remove_button', $parents)) {
+      $suggestions[] = 'input__' . $element['#type'] . '__remove_button';
+    }
+  }
+}
+

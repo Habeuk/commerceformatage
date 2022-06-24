@@ -1,0 +1,6 @@
+commerceformatage.settings_form:
+  title: commerce formatage
+  description: Configure commerce formatage.
+  parent: system.admin_config_system
+  route_name: commerceformatage.settings_form
+  weight: 10

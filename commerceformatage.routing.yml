@@ -1,0 +1,15 @@
+commerceformatage.refreshblock:
+  path: '/commerceformatage/refreshblock'
+  defaults:
+    _title: 'Example'
+    _controller: '\Drupal\commerceformatage\Controller\CommerceformatageController::refreshblock'
+  requirements:
+    _permission: 'access content'
+
+commerceformatage.settings_form:
+  path: '/admin/config/system/commerceformatage'
+  defaults:
+    _title: 'commerce formatage settings'
+    _form: 'Drupal\commerceformatage\Form\SettingsForm'
+  requirements:
+    _permission: 'administer commerceformatage configuration'

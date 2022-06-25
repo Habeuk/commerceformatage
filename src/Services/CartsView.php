@@ -7,6 +7,7 @@ use Drupal\commerce_cart\CartProviderInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
+use Drupal\commerce_cart\CartManager;
 
 /**
  * Permet d'afficher et de gerer un panier.
@@ -21,6 +22,7 @@ class CartsView {
    * @var \Drupal\commerce_cart\CartProviderInterface
    */
   protected $cartProvider;
+  protected $CartManager;
   
   /**
    * The entity type manager.
@@ -29,18 +31,33 @@ class CartsView {
    */
   protected $entityTypeManager;
   
-  function __construct(CartProviderInterface $cart_provider, EntityTypeManagerInterface $entity_type_manager) {
+  function __construct(CartProviderInterface $cart_provider, EntityTypeManagerInterface $entity_type_manager, CartManager $CartManager) {
     $this->cartProvider = $cart_provider;
     $this->entityTypeManager = $entity_type_manager;
+    $this->CartManager = $CartManager;
   }
   
-  function getCartRender() {
-    $cachable_metadata = new CacheableMetadata();
-    $cachable_metadata->addCacheContexts([
-      'user',
-      'session'
-    ]);
-    
+  function removeItemInCart($cart_id, $variant_id) {
+    $carts = $this->getCarts();
+    $ids = [];
+    foreach ($carts as $c_id => $cart) {
+      $items = $cart->getItems();
+      if ($items) {
+        foreach ($items as $p => $item) {
+          if ($item->getPurchasedEntityId() == $variant_id) {
+            $this->CartManager->removeOrderItem($cart, $item);
+          }
+        }
+      }
+    }
+    return $ids;
+  }
+  
+  /**
+   *
+   * @return \Drupal\commerce_order\Entity\OrderInterface[]
+   */
+  protected function getCarts() {
     /** @var \Drupal\commerce_order\Entity\OrderInterface[] $carts */
     $carts = $this->cartProvider->getCarts();
     
@@ -51,6 +68,17 @@ class CartsView {
       // that the cart is still a cart.
       return $cart->hasItems() && $cart->cart->value;
     });
+    return $carts;
+  }
+  
+  function getCartRender() {
+    $cachable_metadata = new CacheableMetadata();
+    $cachable_metadata->addCacheContexts([
+      'user',
+      'session'
+    ]);
+    
+    $carts = $this->getCarts();
     
     $url = Url::fromRoute('commerce_checkout.checkout');
     $url->setOption('attributes', [
@@ -116,8 +144,9 @@ class CartsView {
     }
     
     foreach ($carts as $cart_id => $cart) {
+      
       $cart_views[] = [
-        '#prefix' => '<div class="cart cart-block">',
+        '#prefix' => '<div class="cart cart-block" data_cart_id="' . $cart_id . '">',
         '#suffix' => '</div>',
         '#type' => 'view',
         '#name' => $available_views[$cart_id],
@@ -127,7 +156,6 @@ class CartsView {
         '#embed' => TRUE
       ];
     }
-    
     return $cart_views;
   }
   

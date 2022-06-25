@@ -8,4 +8,4 @@ services:
       
   commerceformatage.cartviews:
     class: Drupal\commerceformatage\Services\CartsView
-    arguments: ['@commerce_cart.cart_provider', '@entity_type.manager']
+    arguments: ['@commerce_cart.cart_provider', '@entity_type.manager', '@commerce_cart.cart_manager']

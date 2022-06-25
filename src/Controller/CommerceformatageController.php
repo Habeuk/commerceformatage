@@ -9,6 +9,8 @@ use Drupal\Core\Ajax\ReplaceCommand;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Drupal\Component\Serialization\Json;
 
 /**
  * Returns responses for commerce formatage routes.
@@ -75,11 +77,43 @@ class CommerceformatageController extends ControllerBase {
       '#value' => 'Mon nv panier : ' . rand(10, 999)
     ];
     $build = $this->CartsView->getCartRender();
-    \Stephane888\Debug\debugLog::$max_depth = 5;
-    \Stephane888\Debug\debugLog::kintDebugDrupal($build, 'getCarts_build', true);
     $command = new ReplaceCommand("#commerceformatage_cart_habeuk_view_id", $build);
     $response->addCommand($command);
     return $response;
+  }
+  
+  /**
+   *
+   * @param Request $request
+   * @param string $cart_id
+   * @param string $item_id
+   */
+  public function removeProduct(Request $request, $cart_id, $item_id) {
+    $ids = $this->CartsView->removeItemInCart($cart_id, $item_id);
+    $configs = [
+      'hello',
+      $cart_id,
+      $item_id,
+      $ids
+    ];
+    return $this->reponse($configs);
+  }
+  
+  /**
+   *
+   * @param array|string $configs
+   * @param number $code
+   * @param string $message
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
+   */
+  protected function reponse($configs, $code = null, $message = null) {
+    if (!is_string($configs))
+      $configs = Json::encode($configs);
+    $reponse = new JsonResponse();
+    if ($code)
+      $reponse->setStatusCode($code, $message);
+    $reponse->setContent($configs);
+    return $reponse;
   }
   
 }

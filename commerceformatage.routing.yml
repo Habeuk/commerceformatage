@@ -5,6 +5,14 @@ commerceformatage.refreshblock:
     _controller: '\Drupal\commerceformatage\Controller\CommerceformatageController::refreshblock'
   requirements:
     _permission: 'access content'
+    
+commerceformatage.remove_product:
+  path: '/commerceformatage/remove-product/{cart_id}/{item_id}'
+  defaults:
+    _title: 'Example'
+    _controller: '\Drupal\commerceformatage\Controller\CommerceformatageController::removeProduct'
+  requirements:
+    _permission: 'access content'
 
 commerceformatage.settings_form:
   path: '/admin/config/system/commerceformatage'

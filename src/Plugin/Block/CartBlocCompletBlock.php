@@ -23,6 +23,7 @@ use Drupal\commerceformatage\Services\CartsView;
  * )
  */
 class CartBlocCompletBlock extends commerceCartBlock {
+  
   /**
    *
    * @var LayoutgenentitystylesServices

@@ -16,12 +16,20 @@ function commerceformatage_form_alter(&$form, FormStateInterface $form_state, $f
 }
 
 /**
+ * implement hook_form_FORMID_alter
+ */
+function commerceformatage_form_commerce_checkout_flow_multistep_default_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form['#attributes']['class'][] = 'with-tablet mx-auto my-5';
+  // dump($form);
+}
+
+/**
  *
  * @param array $form
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  * @param int $form_id
  */
-function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $entityTypeManger = \Drupal::entityTypeManager();
   // Si l'utilisateur a selectionner un variante:
   if ($form_state->has('selected_variation')) {
@@ -228,5 +236,18 @@ function commerceformatage_theme_suggestions_input_alter(&$suggestions, array $v
       $suggestions[] = 'input__' . $element['#type'] . '__remove_button';
     }
   }
+}
+
+function commerceformatage_preprocess_html(&$vars) {
+  $routeName = \Drupal::routeMatch()->getRouteName();
+  // dump($routeName);
+  if (str_contains($routeName, "entity.commerce_payment_method") || str_contains($routeName, "commerce_user_orders")) {
+    // dump($vars);
+    // dump($vars['page']['content']['attributes']);
+    $vars['page']['content']['displays_class'] = [
+      'container my-5'
+    ];
+  }
+  // dump($routeName);
 }
 

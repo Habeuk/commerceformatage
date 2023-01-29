@@ -64,22 +64,21 @@ class CommerceformatageController extends ControllerBase {
       throw new NotFoundHttpException();
     }
     $response = new AjaxResponse();
-    $build = [
-      '#type' => 'html_tag',
-      '#tag' => 'h3',
-      '#attributes' => [
-        'class' => [
-          'p-4',
-          'bg-primay'
-        ],
-        'id' => 'commerceformatage_cart_habeuk_view_id'
-      ],
-      '#value' => 'Mon nv panier : ' . rand(10, 999)
-    ];
     $build = $this->CartsView->getCartRender();
     $command = new ReplaceCommand("#commerceformatage_cart_habeuk_view_id", $build);
     $response->addCommand($command);
     return $response;
+  }
+  
+  /**
+   * Methode utiliser uniquement pour des tests.
+   *
+   * @deprecated
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
+   */
+  public function cartJson() {
+    $build = $this->CartsView->getCartRender();
+    return $this->reponse([]);
   }
   
   /**

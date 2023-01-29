@@ -24,6 +24,17 @@ function commerceformatage_form_commerce_checkout_flow_multistep_default_alter(&
 }
 
 /**
+ * Implement hook_preprocess_page
+ */
+function commerceformatage_preprocess_page(&$variables) {
+  $loggin = \Drupal::currentUser()->id();
+  if (!$loggin) {
+    // cette librairie permet de faire des liens ajax.
+    $variables['page']['content']['#attached']['library'][] = 'core/drupal.ajax';
+  }
+}
+
+/**
  *
  * @param array $form
  * @param \Drupal\Core\Form\FormStateInterface $form_state

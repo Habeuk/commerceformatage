@@ -6,6 +6,15 @@ commerceformatage.refreshblock:
   requirements:
     _permission: 'access content'
     
+    
+commerceformatage.cart_json:
+  path: '/commerceformatage/cart-json'
+  defaults:
+    _title: 'Example'
+    _controller: '\Drupal\commerceformatage\Controller\CommerceformatageController::cartJson'
+  requirements:
+    _permission: 'access content'
+    
 commerceformatage.remove_product:
   path: '/commerceformatage/remove-product/{cart_id}/{item_id}'
   defaults:

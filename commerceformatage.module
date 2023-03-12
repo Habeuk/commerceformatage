@@ -19,6 +19,8 @@ function commerceformatage_form_alter(&$form, FormStateInterface $form_state, $f
  * implement hook_form_FORMID_alter
  */
 function commerceformatage_form_commerce_checkout_flow_multistep_default_alter(&$form, FormStateInterface $form_state, $form_id) {
+  \Stephane888\Debug\debugLog::$max_depth = 5;
+  \Stephane888\Debug\debugLog::kintDebugDrupal($form['payment_information'], 'checkout_flow_multistep_default_alter', true, 'logs');
   $form['#attributes']['class'][] = 'with-tablet mx-auto my-5';
   // dump($form);
 }

@@ -11,16 +11,91 @@
  */
 use Drupal\Core\Form\FormStateInterface;
 
-function commerceformatage_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  // dump($form_id);
+/**
+ * Gerer l'affichage du formaulaire ajout au panier.
+ *
+ * @param array $form
+ * @param FormStateInterface $form_state
+ * @param string $form_id
+ */
+function commerceformatage_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  //
+  if (str_contains($form_id, 'commerce_checkout_flow')) {
+    // dump($form);
+    /**
+     * On differencie les titres de blocks.
+     */
+    foreach ($form as &$value) {
+      if (is_array($value) && !empty($value['#type']) && $value['#type'] == 'fieldset') {
+        $value['#legend']['attributes']['class'][] = 'h2';
+        // dump($value);
+        // On force la paiement la modification du titre, mais il est logique
+        // qu'on doit chnager cela.
+        if (!empty($value['#pane_id']) && $value['#pane_id'] == 'payment_information') {
+          // $value['#title'] = "Information de livraison";
+        }
+      }
+    }
+    //
+    if (!empty($form['review'])) {
+      // dump($form['review']);
+      foreach ($form['review'] as $k => &$value) {
+        if (is_array($value) && !empty($value['#type']) && $value['#type'] == 'fieldset') {
+          $value['#legend']['attributes']['class'][] = 'h2';
+          // on differencie l'affichage des payments;
+          if (!empty($value['summary']['payment_gateway'])) {
+            //
+            $value['summary']['payment_gateway'] = [
+              '#type' => 'html_tag',
+              '#tag' => 'div',
+              '#attributes' => [
+                'class' => [
+                  "h4"
+                ]
+              ],
+              '#value' => $value['summary']['payment_gateway']['#markup']
+            ];
+          }
+          //
+          // dump($value);
+          // On force la paiement la modification du titre, mais il est
+          // logique
+          // qu'on doit chnager cela.
+          if ($k == 'payment_information') {
+            // $value['#title'] = "Information de livraison";
+          }
+        }
+      }
+    /**
+     * On doit mieux comprendre Finalize shipmentCancel shipment, mais en
+     * attendant on se doit masquer ce champs.
+     * RQ: l'entite qui gere cela c'est "commerce_shipment" on peut le retirer
+     * au niveau de l'affichage du formulaire.
+     * Bref c'etait dans =>
+     * /admin/commerce/config/shipment-types/shipping_with_creneau/edit/display
+     * il fallait desactiver le champs State.
+     */
+      // if
+      // (!empty($form['review']['shipping_information']['summary'][0]['shipment']))
+      // {
+      // $form['review']['shipping_information']['summary'][0]['#access'] =
+      // false;
+      // dump($form['review']['shipping_information']['summary'][0]);
+      // }
+    }
+    /**
+     * Etape : order_information.
+     */
+    if (!empty($form['#step_id']) && $form['#step_id'] == "order_information") {
+      // dump($form);
+    }
+  }
 }
 
 /**
  * implement hook_form_FORMID_alter
  */
 function commerceformatage_form_commerce_checkout_flow_multistep_default_alter(&$form, FormStateInterface $form_state, $form_id) {
-  \Stephane888\Debug\debugLog::$max_depth = 5;
-  \Stephane888\Debug\debugLog::kintDebugDrupal($form['payment_information'], 'checkout_flow_multistep_default_alter', true, 'logs');
   $form['#attributes']['class'][] = 'with-tablet mx-auto my-5';
   // dump($form);
 }
@@ -58,10 +133,11 @@ function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$for
     '#type' => 'hidden',
     '#value' => $selected_variation->id()
   ];
+  // dump($form);
   // disbled default submit
   $form['actions']['submit']['#access'] = false;
-  // add custom submit
-  $form['actions']['custom_submit'] = [
+  // add custom submit (utilise ajax)
+  $custom_submit = [
     '#type' => 'html_tag',
     '#tag' => 'span',
     '#attributes' => [
@@ -108,6 +184,46 @@ function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$for
       ]
     ]
   ];
+  if (!empty($form['quantity'])) {
+    $quantity = $form['quantity'];
+    unset($form['quantity']);
+    $form['actions']['custom_submit'] = $custom_submit;
+    $actions = $form['actions'];
+    unset($form['actions']);
+    $container = [
+      '#type' => 'html_tag',
+      '#tag' => 'div',
+      '#attributes' => [
+        'class' => [
+          'row no-gutters d-flex align-items-end'
+        ]
+      ],
+      [
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#attributes' => [
+          'class' => [
+            'col-3'
+          ]
+        ],
+        $quantity
+      ],
+      [
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#attributes' => [
+          'class' => [
+            'col'
+          ]
+        ],
+        $actions
+      ]
+    ];
+    $form['contain-qty-add'] = $container;
+  }
+  else {
+    $form['actions']['custom_submit'] = $custom_submit;
+  }
 }
 
 /**
@@ -118,6 +234,7 @@ function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$for
  * @param integer $form_id
  */
 function commerceformatage_form_views_form_commerce_cart_form_default_alter(&$form, FormStateInterface $form_state, $form_id) {
+  
   // Add class container
   if (!isset($form['#attributes']['class'])) {
     $form['#attributes']['class'] = [];

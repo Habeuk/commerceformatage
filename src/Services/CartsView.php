@@ -113,12 +113,12 @@ class CartsView {
           [
             '#type' => 'link',
             '#url' => $urlCart,
-            '#title' => Markup::create('<i class="fas fa-luggage-cart mr-2"></i>' . t($configs['cart_button_text']))
+            '#title' => Markup::create('<i class="fas fa-luggage-cart mr-2"></i>' . t($configs['commerce']['cart_button_text']))
           ],
           [
             '#type' => 'link',
             '#url' => $url,
-            '#title' => Markup::create(t($configs['checkout_button_text']) . '<i class="fas fa-angle-right ml-3"></i>')
+            '#title' => Markup::create(t($configs['commerce']['checkout_button_text']) . '<i class="fas fa-angle-right ml-3"></i>')
           ]
         ]
       ];

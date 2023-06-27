@@ -111,6 +111,7 @@ function commerceformatage_preprocess_page(&$variables) {
  * @param int $form_id
  */
 function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // dump($form);
   $entityTypeManger = \Drupal::entityTypeManager();
   // Si l'utilisateur a selectionner un variante:
   if ($form_state->has('selected_variation')) {
@@ -144,6 +145,7 @@ function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$for
         'commerceformatage-button-add-to-cart'
       ]
     ],
+    // valeur 1: icon
     [
       '#type' => 'html_tag',
       '#tag' => 'i',
@@ -154,6 +156,7 @@ function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$for
         ]
       ]
     ],
+    // valeur 2: texte ( la position de ce texte ne change pas pour 1x ).
     [
       '#type' => 'html_tag',
       '#tag' => 'div',
@@ -162,8 +165,10 @@ function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$for
           'px-4'
         ]
       ],
+      '#has_value_add_to_cart' => true,
       '#value' => $form['actions']['submit']['#value']
     ],
+    // valeur 3: icone loader.
     [
       '#type' => 'html_tag',
       '#tag' => 'i',
@@ -177,6 +182,17 @@ function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$for
       ]
     ]
   ];
+  /**
+   *
+   * @var \Drupal\commerce_cart\Form\AddToCartForm $formAddCart
+   */
+  $formAddCart = $form_state->getFormObject();
+  /**
+   *
+   * @var \Drupal\commerce_order\Entity\OrderItem $entity
+   */
+  $entity = $formAddCart->getEntity();
+  // dump($entity->bundle());
   if (!empty($form['quantity'])) {
     $quantity = $form['quantity'];
     unset($form['quantity']);
@@ -216,6 +232,8 @@ function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$for
   }
   else {
     $form['actions']['custom_submit'] = $custom_submit;
+    if (!empty($form['actions']['submit']))
+      unset($form['actions']['submit']);
   }
 }
 

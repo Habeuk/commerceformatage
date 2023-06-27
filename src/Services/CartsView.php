@@ -8,6 +8,7 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 use Drupal\commerce_cart\CartManager;
+use Stephane888\Debug\Repositories\ConfigDrupal;
 
 /**
  * Permet d'afficher et de gerer un panier.
@@ -72,6 +73,7 @@ class CartsView {
   }
   
   function getCartRender() {
+    $configs = ConfigDrupal::config('wb_horizon_public.defaultconfigbydomain');
     $cachable_metadata = new CacheableMetadata();
     $cachable_metadata->addCacheContexts([
       'user',
@@ -82,12 +84,15 @@ class CartsView {
     
     $url = Url::fromRoute('commerce_checkout.checkout');
     $url->setOption('attributes', [
-      'class' => 'btn btn-outline-primary my-5 mx-3'
+      'class' => 'btn btn-primary mr-4'
     ]);
     //
+    $urlCart = Url::fromRoute('commerce_cart.page');
+    $urlCart->setOption('attributes', [
+      'class' => 'btn btn-link pr-0'
+    ]);
     
     if (!empty($carts)) {
-      
       $build['cart'] = [
         '#type' => 'html_tag',
         '#tag' => 'section',
@@ -96,9 +101,25 @@ class CartsView {
         ],
         $this->getCartViews($carts),
         [
-          '#type' => 'link',
-          '#url' => $url,
-          '#title' => Markup::create(t('passer la commande ') . '<i class="fas fa-angle-right ml-3"></i>')
+          '#type' => 'html_tag',
+          '#tag' => 'section',
+          '#attributes' => [
+            'class' => [
+              'd-flex',
+              'my-5',
+              'justify-content-between'
+            ]
+          ],
+          [
+            '#type' => 'link',
+            '#url' => $urlCart,
+            '#title' => Markup::create('<i class="fas fa-luggage-cart mr-2"></i>' . t($configs['cart_button_text']))
+          ],
+          [
+            '#type' => 'link',
+            '#url' => $url,
+            '#title' => Markup::create(t($configs['checkout_button_text']) . '<i class="fas fa-angle-right ml-3"></i>')
+          ]
         ]
       ];
     }

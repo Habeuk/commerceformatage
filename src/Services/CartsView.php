@@ -74,6 +74,14 @@ class CartsView {
   
   function getCartRender() {
     $configs = ConfigDrupal::config('wb_horizon_public.defaultconfigbydomain');
+    if ($configs) {
+      $cart_button_text = $configs['commerce']['cart_button_text'];
+      $checkout_button_text = $configs['commerce']['checkout_button_text'];
+    }
+    else {
+      $cart_button_text = 'add to cart';
+      $checkout_button_text = 'checkout';
+    }
     $cachable_metadata = new CacheableMetadata();
     $cachable_metadata->addCacheContexts([
       'user',
@@ -113,12 +121,12 @@ class CartsView {
           [
             '#type' => 'link',
             '#url' => $urlCart,
-            '#title' => Markup::create('<i class="fas fa-luggage-cart mr-2"></i>' . t($configs['commerce']['cart_button_text']))
+            '#title' => Markup::create('<i class="fas fa-luggage-cart mr-2"></i>' . t($cart_button_text))
           ],
           [
             '#type' => 'link',
             '#url' => $url,
-            '#title' => Markup::create(t($configs['commerce']['checkout_button_text']) . '<i class="fas fa-angle-right ml-3"></i>')
+            '#title' => Markup::create(t($checkout_button_text) . '<i class="fas fa-angle-right ml-3"></i>')
           ]
         ]
       ];

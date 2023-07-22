@@ -12,6 +12,6 @@
     "minimum-stability": "dev",
     "require": {
     	"drupal/commerce_cart_api": "^1.5",
-    	"drupal/commerce": "^2.30",
+    	"drupal/commerce": "^2.30"
     }
 }

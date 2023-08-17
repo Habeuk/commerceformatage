@@ -1,5 +1,4 @@
 <?php
-
 /**
  *
  * @file
@@ -28,7 +27,7 @@ function commerceformatage_form_alter(array &$form, FormStateInterface $form_sta
      */
     foreach ($form as &$value) {
       if (is_array($value) && !empty($value['#type']) && $value['#type'] == 'fieldset') {
-        $value['#legend']['attributes']['class'][] = 'h2';
+        $value['#legend']['attributes']['class'][] = 'font-weight-bold h3';
         // dump($value);
         // On force la paiement la modification du titre, mais il est logique
         // qu'on doit chnager cela.
@@ -42,7 +41,7 @@ function commerceformatage_form_alter(array &$form, FormStateInterface $form_sta
       // dump($form['review']);
       foreach ($form['review'] as $k => &$value) {
         if (is_array($value) && !empty($value['#type']) && $value['#type'] == 'fieldset') {
-          $value['#legend']['attributes']['class'][] = 'h2';
+          $value['#legend']['attributes']['class'][] = 'font-weight-bold h3';
           // on differencie l'affichage des payments;
           if (!empty($value['summary']['payment_gateway'])) {
             //

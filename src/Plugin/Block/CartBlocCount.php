@@ -19,7 +19,7 @@ use Drupal\commerceformatage\Services\CartsView;
  * @Block(
  *   id = "commerceformatage_cart_bloc_count",
  *   admin_label = @Translation("cart bloc count"),
- *   category = @Translation("Custom")
+ *   category = @Translation("commerceformatage")
  * )
  */
 class CartBlocCount extends commerceCartBlock {
@@ -94,7 +94,6 @@ class CartBlocCount extends commerceCartBlock {
       '#value' => '(' . $count . ')'
     ];
     $build['#theme'] = 'commerceformatage_cart_bloc_count';
-    
     return $build;
   }
   

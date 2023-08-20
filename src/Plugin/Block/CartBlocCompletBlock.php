@@ -19,7 +19,7 @@ use Drupal\commerceformatage\Services\CartsView;
  * @Block(
  *   id = "commerceformatage_cart_bloc_complet",
  *   admin_label = @Translation("cart bloc complet"),
- *   category = @Translation("Custom")
+ *   category = @Translation("commerceformatage")
  * )
  */
 class CartBlocCompletBlock extends commerceCartBlock {

@@ -20,7 +20,7 @@ class CartsView {
   /**
    * The cart provider.
    *
-   * @var \Drupal\commerce_cart\CartProviderInterface
+   * @var \Drupal\commerce_cart\CartProvider
    */
   protected $cartProvider;
   protected $CartManager;
@@ -61,7 +61,7 @@ class CartsView {
   protected function getCarts() {
     /** @var \Drupal\commerce_order\Entity\OrderInterface[] $carts */
     $carts = $this->cartProvider->getCarts();
-    
+    //
     $carts = array_filter($carts, function ($cart) {
       /** @var \Drupal\commerce_order\Entity\OrderInterface $cart */
       // There is a chance the cart may have converted from a draft order, but
@@ -79,8 +79,8 @@ class CartsView {
       $checkout_button_text = $configs['commerce']['checkout_button_text'];
     }
     else {
-      $cart_button_text = 'add to cart';
-      $checkout_button_text = 'checkout';
+      $cart_button_text = 'See cart';
+      $checkout_button_text = 'Checkout';
     }
     $cachable_metadata = new CacheableMetadata();
     $cachable_metadata->addCacheContexts([

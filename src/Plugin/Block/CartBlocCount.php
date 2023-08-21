@@ -9,9 +9,9 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\layoutgenentitystyles\Services\LayoutgenentitystylesServices;
 use Drupal\commerce_cart\CartProviderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Url;
-use Drupal\Core\Render\Markup;
 use Drupal\commerceformatage\Services\CartsView;
+use KrepyshSpec\World\Currency;
+use Drupal\commerce_price\Calculator;
 
 /**
  * Provides a cart bloc complet block.
@@ -54,6 +54,34 @@ class CartBlocCount extends commerceCartBlock {
    *
    * {@inheritdoc}
    */
+  public function defaultConfiguration() {
+    return [
+      'show_subtotal' => false,
+      'block_load_style_scss_js' => 'commerceformatage/cartfloat'
+    ];
+  }
+  
+  /**
+   *
+   * {@inheritdoc}
+   */
+  public function blockForm($form, FormStateInterface $form_state) {
+    $form['show_subtotal'] = [
+      '#type' => 'radios',
+      '#title' => $this->t('Display sub-total'),
+      '#default_value' => (int) $this->configuration['show_subtotal'],
+      '#options' => [
+        $this->t('No'),
+        $this->t('Yes')
+      ]
+    ];
+    return $form;
+  }
+  
+  /**
+   *
+   * {@inheritdoc}
+   */
   public function build() {
     $cachable_metadata = new CacheableMetadata();
     $cachable_metadata->addCacheContexts([
@@ -72,16 +100,44 @@ class CartBlocCount extends commerceCartBlock {
     });
     
     $count = 0;
+    $subTotals = 0;
+    
     if (!empty($carts)) {
       foreach ($carts as $cart_id => $cart) {
+        /**
+         *
+         * @var \Drupal\commerce_order\Entity\Order $cart
+         */
         foreach ($cart->getItems() as $order_item) {
           $count += (int) $order_item->getQuantity();
         }
+        if ($subTotals)
+          $subTotals = $subTotals->add($cart->getSubtotalPrice());
+        else
+          $subTotals = $cart->getSubtotalPrice();
         $cachable_metadata->addCacheableDependency($cart);
       }
     }
     
-    $build['content'] = [
+    $build = [];
+    
+    if ($this->configuration['show_subtotal'] && $subTotals) {
+      $symboles = Currency::all();
+      $build['content'][] = [
+        '#type' => 'html_tag',
+        '#tag' => 'span',
+        '#attributes' => [
+          'class' => [
+            'commerceformatage_cart_habeuk_open',
+            'mr-0',
+            'ml-2'
+          ]
+        ],
+        '#value' => Calculator::trim($subTotals->getNumber()) . ' ' . $symboles[$subTotals->getCurrencyCode()]['symbol']
+      ];
+    }
+    
+    $build['content'][] = [
       '#type' => 'html_tag',
       '#tag' => 'i',
       '#attributes' => [
@@ -94,17 +150,13 @@ class CartBlocCount extends commerceCartBlock {
       '#value' => '(' . $count . ')'
     ];
     $build['#theme'] = 'commerceformatage_cart_bloc_count';
-    return $build;
-  }
-  
-  /**
-   *
-   * {@inheritdoc}
-   */
-  public function defaultConfiguration() {
-    return [
-      'block_load_style_scss_js' => 'commerceformatage/cartfloat'
+    $build['#cache'] = [
+      'contexts' => [
+        'cart'
+      ]
     ];
+    
+    return $build;
   }
   
   /**
@@ -113,6 +165,8 @@ class CartBlocCount extends commerceCartBlock {
    */
   public function blockSubmit($form, FormStateInterface $form_state) {
     parent::blockSubmit($form, $form_state);
+    //
+    $this->configuration['show_subtotal'] = $form_state->getValue('show_subtotal');
     $library = $this->configuration['block_load_style_scss_js'];
     $this->LayoutgenentitystylesServices->addStyleFromModule($library, 'commerceformatage_cart_bloc_complet', 'default');
   }

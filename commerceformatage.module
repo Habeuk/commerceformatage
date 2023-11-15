@@ -20,6 +20,14 @@ use Drupal\Core\Form\FormStateInterface;
 function commerceformatage_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
   //
   if (str_contains($form_id, 'commerce_checkout_flow')) {
+    // button back customise
+    // if ($form['actions']['next']['#suffix']) {
+    // /**
+    // *
+    // * @var \Drupal\Core\GeneratedLink $link
+    // */
+    // $link = $form['actions']['next']['#suffix'];
+    // }
     $form['#attributes']['class'][] = 'with-tablet mx-auto my-5';
     // dump($form);
     /**

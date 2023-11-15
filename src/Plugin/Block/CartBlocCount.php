@@ -57,7 +57,8 @@ class CartBlocCount extends commerceCartBlock {
   public function defaultConfiguration() {
     return [
       'show_subtotal' => false,
-      'block_load_style_scss_js' => 'commerceformatage/cartfloat'
+      'block_load_style_scss_js' => 'commerceformatage/cartfloat',
+      'class_content' => ''
     ];
   }
   
@@ -74,6 +75,11 @@ class CartBlocCount extends commerceCartBlock {
         $this->t('No'),
         $this->t('Yes')
       ]
+    ];
+    $form['class_content'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Set class content'),
+      '#default_value' => $this->configuration['class_content']
     ];
     return $form;
   }
@@ -150,6 +156,11 @@ class CartBlocCount extends commerceCartBlock {
       '#value' => '(' . $count . ')'
     ];
     $build['#theme'] = 'commerceformatage_cart_bloc_count';
+    $build['#attributes'] = [
+      'class' => [
+        $this->configuration['class_content']
+      ]
+    ];
     $build['#cache'] = [
       'contexts' => [
         'cart'
@@ -167,6 +178,7 @@ class CartBlocCount extends commerceCartBlock {
     parent::blockSubmit($form, $form_state);
     //
     $this->configuration['show_subtotal'] = $form_state->getValue('show_subtotal');
+    $this->configuration['class_content'] = $form_state->getValue('class_content');
     $library = $this->configuration['block_load_style_scss_js'];
     $this->LayoutgenentitystylesServices->addStyleFromModule($library, 'commerceformatage_cart_bloc_complet', 'default');
   }

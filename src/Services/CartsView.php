@@ -173,7 +173,6 @@ class CartsView {
     }
     
     foreach ($carts as $cart_id => $cart) {
-      
       $cart_views[] = [
         '#prefix' => '<div class="cart cart-block" data_cart_id="' . $cart_id . '">',
         '#suffix' => '</div>',

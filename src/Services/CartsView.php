@@ -74,7 +74,7 @@ class CartsView {
   
   function getCartRender() {
     $configs = ConfigDrupal::config('wb_horizon_public.defaultconfigbydomain');
-    if ($configs) {
+    if (!empty($configs['commerce']['cart_button_text'])) {
       $cart_button_text = $configs['commerce']['cart_button_text'];
       $checkout_button_text = $configs['commerce']['checkout_button_text'];
     }

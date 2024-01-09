@@ -1,9 +1,8 @@
 name: commerce formatage
 type: module
-description: permet d&#039;ajouter un jolie affichage sur un site de commerce.
+description: permet d'ajouter un jolie affichage sur un site de commerce.
 package: Custom
-core: 8.x
-core_version_requirement: ^8 || ^9
+core_version_requirement: ^9 || ^10
 dependencies:  
   - commerce:commerce
   - commerce_cart_api:commerce_cart_api

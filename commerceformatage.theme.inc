@@ -3,7 +3,8 @@
 /**
  */
 function template_preprocess_submit_commerce(&$vars) {
-  // dump($vars);
+  $vars['attributes'] = $vars['element']['#attributes'];
+  $vars['value'] = $vars['element']['#value'];
 }
 
 function template_preprocess_commerceformatage_cart_bloc_count(&$vars) {

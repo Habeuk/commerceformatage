@@ -124,23 +124,22 @@ function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$for
   if ($form_state->has('selected_variation')) {
     $selected_variation = $form_state->get('selected_variation');
     /** @var \Drupal\commerce_product\Entity\ProductVariationInterface $selected_variation */
-    $selected_variation = $entityTypeManger->getStorage('commerce_product_variation')->load($selected_variation);
+    $commerce_product_variation = $entityTypeManger->getStorage('commerce_product_variation')->load($selected_variation);
   }
   else {
-    $selected_variation = $form_state->get('product')->getDefaultVariation();
+    $commerce_product_variation = $form_state->get('product')->getDefaultVariation();
   }
   // add id off variation.
   $form['commerce_product_variation_id'] = [
     '#type' => 'hidden',
-    '#value' => $selected_variation->id()
+    '#value' => $commerce_product_variation->id()
   ];
   // dump($form);
   // disbled default submit
   $form['actions']['submit']['#access'] = false;
   // add custom submit (utilise ajax)
   $custom_submit = [
-    '#type' => 'html_tag',
-    '#tag' => 'span',
+    '#theme' => 'commerceformatage_submit_commerce',
     '#attributes' => [
       'class' => [
         'd-flex',
@@ -152,29 +151,7 @@ function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$for
         'commerceformatage-button-add-to-cart'
       ]
     ],
-    // valeur 1: icon
-    [
-      '#type' => 'html_tag',
-      '#tag' => 'i',
-      '#attributes' => [
-        'class' => [
-          'fas',
-          'fa-cart-plus'
-        ]
-      ]
-    ],
-    // valeur 2: texte ( la position de ce texte ne change pas pour 1x ).
-    [
-      '#type' => 'html_tag',
-      '#tag' => 'div',
-      '#attributes' => [
-        'class' => [
-          'px-4'
-        ]
-      ],
-      '#has_value_add_to_cart' => true,
-      '#value' => $form['actions']['submit']['#value']
-    ],
+    '#value' => $form['actions']['submit']['#value'],
     // valeur 3: icone loader.
     [
       '#type' => 'html_tag',
@@ -350,7 +327,7 @@ function commerceformatage_preprocess_input__submit__commerce(&$vars) {
 }
 
 function commerceformatage_theme() {
-  $hooks['submit_commerce'] = [
+  $hooks['commerceformatage_submit_commerce'] = [
     'preprocess functions' => [
       'template_preprocess_submit_commerce'
     ],

@@ -126,7 +126,10 @@ class CartBlocCount extends commerceCartBlock {
     }
     
     $build = [];
-    
+    $build['content'][] = [
+      '#theme' => 'commerceformatage_cart_bloc_count_svgback',
+      '#count' => '(' . $count . ')'
+    ];
     if ($this->configuration['show_subtotal'] && $subTotals) {
       $symboles = Currency::all();
       $build['content'][] = [
@@ -142,19 +145,6 @@ class CartBlocCount extends commerceCartBlock {
         '#value' => Calculator::trim($subTotals->getNumber()) . ' ' . $symboles[$subTotals->getCurrencyCode()]['symbol']
       ];
     }
-    
-    $build['content'][] = [
-      '#type' => 'html_tag',
-      '#tag' => 'i',
-      '#attributes' => [
-        'class' => [
-          'fa-cart-plus',
-          'fas',
-          'commerceformatage_cart_habeuk_open'
-        ]
-      ],
-      '#value' => '(' . $count . ')'
-    ];
     $build['#theme'] = 'commerceformatage_cart_bloc_count';
     $build['#attributes'] = [
       'class' => [
@@ -166,7 +156,6 @@ class CartBlocCount extends commerceCartBlock {
         'cart'
       ]
     ];
-    
     return $build;
   }
   

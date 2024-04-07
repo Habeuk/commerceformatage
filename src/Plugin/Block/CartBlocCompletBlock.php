@@ -38,6 +38,7 @@ class CartBlocCompletBlock extends commerceCartBlock {
   
   public function __construct(array $configuration, $plugin_id, $plugin_definition, CartProviderInterface $cart_provider, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $cart_provider, $entity_type_manager);
+    // \Drupal\Component\Utility\Xss::filterAdmin();
   }
   
   /**
@@ -57,15 +58,7 @@ class CartBlocCompletBlock extends commerceCartBlock {
    */
   public function build() {
     $build[] = [
-      '#type' => 'html_tag',
-      '#tag' => 'i',
-      '#attributes' => [
-        'class' => [
-          'fa-times',
-          'fas',
-          'commerceformatage_cart_habeuk_close'
-        ]
-      ]
+      '#theme' => 'commerceformatage_cart_svgclose'
     ];
     
     $build[] = $this->CartsView->getCartRender();

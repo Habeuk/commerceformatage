@@ -11,3 +11,7 @@ function template_preprocess_commerceformatage_cart_bloc_count(&$vars) {
   // $vars += $vars['element'];
   $vars['content'] = $vars['element']['content'];
 }
+
+function template_preprocess_commerceformatage_cart_bloc_count_svgback(&$vars) {
+  $vars['count'] = $vars['element']['#count'] ?? 0;
+}

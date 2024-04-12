@@ -121,12 +121,12 @@ class CartsView {
           [
             '#type' => 'link',
             '#url' => $urlCart,
-            '#title' => Markup::create('<i class="fas fa-luggage-cart mr-2"></i>' . t($cart_button_text))
+            '#title' => Markup::create('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" width="2rem" height="2rem" class="me-3" style="fill:currentColor;"> <path d="M0 32C0 14.3 14.3 0 32 0H48c44.2 0 80 35.8 80 80V368c0 8.8 7.2 16 16 16H608c17.7 0 32 14.3 32 32s-14.3 32-32 32H541.3c1.8 5 2.7 10.4 2.7 16c0 26.5-21.5 48-48 48s-48-21.5-48-48c0-5.6 1-11 2.7-16H253.3c1.8 5 2.7 10.4 2.7 16c0 26.5-21.5 48-48 48s-48-21.5-48-48c0-5.6 1-11 2.7-16H144c-44.2 0-80-35.8-80-80V80c0-8.8-7.2-16-16-16H32C14.3 64 0 49.7 0 32zM432 96V56c0-4.4-3.6-8-8-8H344c-4.4 0-8 3.6-8 8V96h96zM288 96V56c0-30.9 25.1-56 56-56h80c30.9 0 56 25.1 56 56V96 320H288V96zM512 320V96h16c26.5 0 48 21.5 48 48V272c0 26.5-21.5 48-48 48H512zM240 96h16V320H240c-26.5 0-48-21.5-48-48V144c0-26.5 21.5-48 48-48z"/></svg>' . t($cart_button_text))
           ],
           [
             '#type' => 'link',
             '#url' => $url,
-            '#title' => Markup::create(t($checkout_button_text) . '<i class="fas fa-angle-right ml-3"></i>')
+            '#title' => Markup::create(t($checkout_button_text) . '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="2rem" height="2rem" class="ms-3" style="fill:currentColor;"><path d="M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l370.7 0-73.4 73.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l128-128z"/></svg>')
           ]
         ]
       ];

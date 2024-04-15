@@ -12,7 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 
 /**
- * Gerer l'affichage du formaulaire ajout au panier.
+ * Alteration du processus du cehckout.
  *
  * @param array $form
  * @param FormStateInterface $form_state
@@ -21,87 +21,103 @@ use Drupal\Core\Render\Element;
 function commerceformatage_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
   //
   if (str_contains($form_id, 'commerce_checkout_flow')) {
-    // button back customise
-    // if ($form['actions']['next']['#suffix']) {
-    // /**
-    // *
-    // * @var \Drupal\Core\GeneratedLink $link
-    // */
-    // $link = $form['actions']['next']['#suffix'];
-    // }
     $form['#attributes']['class'][] = 'with-tablet mx-auto my-5';
-    
-    $keys = Element::children($form);
     /**
-     * On differencie les titres de blocks.
+     * Durant l'etape 'step_id:order_information', on met le paiement à la fin
+     * car les informations d'expeditions qui sont en general rempli.
+     * Celui de paiement n'etant donc qu'on copie.
      */
-    foreach ($keys as $key) {
-      $value = &$form[$key];
-      if (is_array($value) && !empty($value['#type']) && $value['#type'] == 'fieldset') {
-        $value['#legend']['attributes']['class'][] = 'h4';
-        // dump($value);
-        // On force la paiement la modification du titre, mais il est logique
-        // qu'on doit chnager cela.
-        if (!empty($value['#pane_id']) && $value['#pane_id'] == 'payment_information') {
-          // $value['#title'] = "Information de livraison";
-        }
-      }
+    if (!empty($form['#step_id']) && $form['#step_id'] == 'order_information') {
+      // meme s'il nya qu'un seule methode de paiement on l'affiche à
+      // l'utilisateur.
+      if (!empty($form['payment_information']['payment_method']['#options']) && count($form['payment_information']['payment_method']['#options']) == 1)
+        $form['payment_information']['payment_method']['#access'] = TRUE;
+      // $form['payment_information']['#weight'] = 20;
     }
+    // $keys = Element::children($form);
+  /**
+   * On differencie les titres de blocks.
+   */
+    // foreach ($keys as $key) {
+    // $value = &$form[$key];
+    // if (is_array($value) && !empty($value['#type']) && $value['#type'] ==
+    // 'fieldset') {
+    // $value['#legend']['attributes']['class'][] = 'h4';
+    // // dump($value);
+    // // On force la paiement la modification du titre, mais il est logique
+    // // qu'on doit chnager cela.
+    // if (!empty($value['#pane_id']) && $value['#pane_id'] ==
+    // 'payment_information') {
+    // // $value['#title'] = "Information de livraison";
+    // }
+    // }
+    // }
     //
-    if (!empty($form['review'])) {
-      // dump($form['review']);
-      foreach ($form['review'] as $k => &$value) {
-        if (is_array($value) && !empty($value['#type']) && $value['#type'] == 'fieldset') {
-          $value['#legend']['attributes']['class'][] = 'font-weight-bold h3';
-          // on differencie l'affichage des payments;
-          if (!empty($value['summary']['payment_gateway'])) {
-            //
-            $value['summary']['payment_gateway'] = [
-              '#type' => 'html_tag',
-              '#tag' => 'div',
-              '#attributes' => [
-                'class' => [
-                  "h4"
-                ]
-              ],
-              '#value' => $value['summary']['payment_gateway']['#markup']
-            ];
-          }
-          //
-          // dump($value);
-          // On force la paiement la modification du titre, mais il est
-          // logique
-          // qu'on doit chnager cela.
-          if ($k == 'payment_information') {
-            // $value['#title'] = "Information de livraison";
-          }
-        }
-      }
-    /**
-     * On doit mieux comprendre Finalize shipmentCancel shipment, mais en
-     * attendant on se doit masquer ce champs.
-     * RQ: l'entite qui gere cela c'est "commerce_shipment" on peut le retirer
-     * au niveau de l'affichage du formulaire.
-     * Bref c'etait dans =>
-     * /admin/commerce/config/shipment-types/shipping_with_creneau/edit/display
-     * il fallait desactiver le champs State.
-     */
-      // if
-      // (!empty($form['review']['shipping_information']['summary'][0]['shipment']))
-      // {
-      // $form['review']['shipping_information']['summary'][0]['#access'] =
-      // false;
-      // dump($form['review']['shipping_information']['summary'][0]);
-      // }
-    }
-    /**
-     * Etape : order_information.
-     */
-    if (!empty($form['#step_id']) && $form['#step_id'] == "order_information") {
-      // dump($form);
-    }
+    // if (!empty($form['review'])) {
+    // // dump($form['review']);
+    // foreach ($form['review'] as $k => &$value) {
+    // if (is_array($value) && !empty($value['#type']) && $value['#type'] ==
+    // 'fieldset') {
+    // $value['#legend']['attributes']['class'][] = 'font-weight-bold h3';
+    // // on differencie l'affichage des payments;
+    // if (!empty($value['summary']['payment_gateway'])) {
+    // //
+    // $value['summary']['payment_gateway'] = [
+    // '#type' => 'html_tag',
+    // '#tag' => 'div',
+    // '#attributes' => [
+    // 'class' => [
+    // "h4"
+    // ]
+    // ],
+    // '#value' => $value['summary']['payment_gateway']['#markup']
+    // ];
+    // }
+    // //
+    // // dump($value);
+    // // On force la paiement la modification du titre, mais il est
+    // // logique
+    // // qu'on doit chnager cela.
+    // if ($k == 'payment_information') {
+    // // $value['#title'] = "Information de livraison";
+    // }
+    // }
+    // }
+    // /**
+    // * On doit mieux comprendre Finalize shipmentCancel shipment, mais en
+    // * attendant on se doit masquer ce champs.
+    // * RQ: l'entite qui gere cela c'est "commerce_shipment" on peut le retirer
+    // * au niveau de l'affichage du formulaire.
+    // * Bref c'etait dans =>
+    // *
+    // /admin/commerce/config/shipment-types/shipping_with_creneau/edit/display
+    // * il fallait desactiver le champs State.
+    // */
+    // // if
+    // //
+    // (!empty($form['review']['shipping_information']['summary'][0]['shipment']))
+    // // {
+    // // $form['review']['shipping_information']['summary'][0]['#access'] =
+    // // false;
+    // // dump($form['review']['shipping_information']['summary'][0]);
+    // // }
+    // }
+    // /**
+    // * Etape : order_information.
+    // */
+    // if (!empty($form['#step_id']) && $form['#step_id'] ==
+    // "order_information") {
+    // // dump($form);
+    // }
   }
 }
+
+/**
+ * implement hook_element_info_alter()
+ */
+// function commerceformatage_element_info_alter(array &$info) {
+// dump($info);
+// }
 
 /**
  * Implement hook_preprocess_page
@@ -115,6 +131,7 @@ function commerceformatage_preprocess_page(&$variables) {
 }
 
 /**
+ * Alteration du formulaire d'ajout au panier.
  *
  * @param array $form
  * @param \Drupal\Core\Form\FormStateInterface $form_state
@@ -132,7 +149,13 @@ function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$for
   else {
     $commerce_product_variation = $form_state->get('product')->getDefaultVariation();
   }
-  // add id off variation.
+  /**
+   *
+   * @var \Drupal\commerce_stock_local\LocalStockChecker $LocalStockChecker
+   */
+  $LocalStockChecker = \Drupal::service('commerce_stock.local_stock_checker');
+  $locations = \Drupal\commerce_stock_local\Entity\StockLocation::loadMultiple();
+  $InStock = $LocalStockChecker->getIsInStock($commerce_product_variation, $locations);
   $form['commerce_product_variation_id'] = [
     '#type' => 'hidden',
     '#value' => $commerce_product_variation->id()
@@ -152,22 +175,10 @@ function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$for
         'btn-primary',
         'w-100',
         'commerceformatage-button-add-to-cart'
-      ]
+      ],
+      'disabled' => !$InStock
     ],
-    '#value' => $form['actions']['submit']['#value'],
-    // valeur 3: icone loader.
-    [
-      '#type' => 'html_tag',
-      '#tag' => 'i',
-      '#attributes' => [
-        'class' => [
-          'fas',
-          'fa-spinner',
-          'loading',
-          'd-none'
-        ]
-      ]
-    ]
+    '#value' => $InStock ? $form['actions']['submit']['#value'] : t("Coming soon")
   ];
   /**
    *
@@ -182,6 +193,8 @@ function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$for
   // dump($entity->bundle());
   if (!empty($form['quantity'])) {
     $quantity = $form['quantity'];
+    if (!empty($quantity['widget'][0]['value']))
+      $quantity['widget'][0]['value']['#attributes']['disabled'] = !$InStock;
     unset($form['quantity']);
     $form['actions']['custom_submit'] = $custom_submit;
     $actions = $form['actions'];
@@ -282,6 +295,11 @@ function commerceformatage_form_views_form_commerce_cart_form_default_alter(&$fo
   }
 }
 
+/**
+ * implement hook_theme
+ *
+ * @return string[]|string[][]|string[][][]
+ */
 function commerceformatage_theme() {
   $hooks['commerceformatage_submit_commerce'] = [
     'preprocess functions' => [
@@ -309,6 +327,12 @@ function commerceformatage_theme() {
   ];
   $hooks['commerceformatage_cart_svgremoveitem'] = [
     'render element' => 'element'
+  ];
+  $hooks['commerceformatage_address_2colonnes'] = [
+    'variables' => [
+      'col_left' => NULL,
+      'col_right' => NULL
+    ]
   ];
   return $hooks;
 }

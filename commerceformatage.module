@@ -9,7 +9,6 @@
  * @see https://www.drupal.org/node/2217931
  */
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Element;
 
 /**
  * Alteration du processus du cehckout.
@@ -34,7 +33,31 @@ function commerceformatage_form_alter(array &$form, FormStateInterface $form_sta
         $form['payment_information']['payment_method']['#access'] = TRUE;
       // $form['payment_information']['#weight'] = 20;
     }
-    // $keys = Element::children($form);
+    /**
+     * Bug rencontrer sur la desactivation d'une methode livraison en fonction
+     * de la methode de livraison.
+     * # Scenario
+     * Si l'on desactive une mthode de livraison en fonction de la methode de
+     * livraison, cela fonctionne uniquement dans le chargement de la page mais
+     * pas via ajax.
+     * Lorqu'on va selectionner une autre methode, le formulaire ajax en place
+     * ne recharge pas le block Shipping.
+     */
+    if (!empty($form['payment_information']['payment_method']['#ajax']['callback'])) {
+      // On va pre-sauvegarder la methode de paiement. En attendant la
+      // resolution :
+      // https://www.drupal.org/project/commerce_shipping/issues/3226851
+      $form['payment_information']['payment_method']['#element_validate'][] = [
+        \Drupal\commerceformatage\CommerceformatageAjax::class,
+        'payment_method_callback_validate'
+      ];
+      // On definit un nouveau callback afin de mettre à jour les methodes de
+      // shipping quand les methodes de payement est modifié.
+      $form['payment_information']['payment_method']['#ajax']['callback'] = [
+        \Drupal\commerceformatage\CommerceformatageAjax::class,
+        'commerce_checkout_flow_callback'
+      ];
+    }
   }
 }
 
@@ -51,7 +74,7 @@ function commerceformatage_form_alter(array &$form, FormStateInterface $form_sta
 function commerceformatage_preprocess_page(&$variables) {
   $loggin = \Drupal::currentUser()->id();
   if (!$loggin) {
-    // cette librairie permet de faire des liens ajax.
+    // Cette librairie permet de faire des liens ajax.
     $variables['page']['content']['#attached']['library'][] = 'core/drupal.ajax';
   }
 }

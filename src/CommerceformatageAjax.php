@@ -88,7 +88,8 @@ class CommerceformatageAjax {
         $response->addCommand(new ReplaceCommand('#' . $form['shipping_information']['#id'], $form['shipping_information']));
       }
       // On recharge la page.
-      $response->addCommand(new RedirectCommand('<current>'));
+      // on masque car cela entrainne un autre probleme.
+      // $response->addCommand(new RedirectCommand('<current>'));
       return $response;
     }
     else

@@ -9,6 +9,7 @@
  * @see https://www.drupal.org/node/2217931
  */
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\commerceformatage\CommerceformatageAjax;
 
 /**
  * Alteration du processus du cehckout.
@@ -44,17 +45,44 @@ function commerceformatage_form_alter(array &$form, FormStateInterface $form_sta
      * ne recharge pas le block Shipping.
      */
     if (!empty($form['payment_information']['payment_method']['#ajax']['callback'])) {
+      // On a un bug voir la tache #831. cela ne regle pas le bug car cette
+      // action s'effectue une foix le formulaire construit,i.e une foix les
+      // methodes de livraison valideés.
+      // $order = CommerceformatageAjax::getOrderFromFrom($form_state);
+      // $payment_gateway = $order->get('payment_gateway')->getValue();
+      // if (!$payment_gateway) {
+      // $payment_options = $form['payment_information']['#payment_options'];
+      // $value = $form_state->getValue([
+      // 'payment_information',
+      // 'payment_method'
+      // ]);
+      // if ($value) {
+      // /**
+      // *
+      // * @var \Drupal\commerce_payment\PaymentOption $payment_option
+      // */
+      // $payment_option = $payment_options[$value];
+      // }
+      // else {
+      // $payment_option = reset($payment_options);
+      // }
+      // if ($payment_option) {
+      // $order->set('payment_gateway', $payment_option->getPaymentGatewayId());
+      // $order->save();
+      // }
+      // }
+      // //////////////////////////////////
       // On va pre-sauvegarder la methode de paiement. En attendant la
-      // resolution :
+      // resolution du bug :
       // https://www.drupal.org/project/commerce_shipping/issues/3226851
       $form['payment_information']['payment_method']['#element_validate'][] = [
-        \Drupal\commerceformatage\CommerceformatageAjax::class,
+        CommerceformatageAjax::class,
         'payment_method_callback_validate'
       ];
       // On definit un nouveau callback afin de mettre à jour les methodes de
       // shipping quand les methodes de payement est modifié.
       $form['payment_information']['payment_method']['#ajax']['callback'] = [
-        \Drupal\commerceformatage\CommerceformatageAjax::class,
+        CommerceformatageAjax::class,
         'commerce_checkout_flow_callback'
       ];
     }

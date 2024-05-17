@@ -88,8 +88,9 @@ class CommerceformatageAjax {
         $response->addCommand(new ReplaceCommand('#' . $form['shipping_information']['#id'], $form['shipping_information']));
       }
       // On recharge la page.
-      // on masque car cela entrainne un autre probleme.
-      // $response->addCommand(new RedirectCommand('<current>'));
+      // Cette approche ne fonctionne pas vraiment, mais le garde pour l'instant
+      // en attendant.
+      $response->addCommand(new RedirectCommand('<current>'));
       return $response;
     }
     else
@@ -139,7 +140,7 @@ class CommerceformatageAjax {
    * @param FormStateInterface $form_state
    * @return \Drupal\commerce_order\Entity\Order
    */
-  static protected function getOrderFromFrom(FormStateInterface $form_state) {
+  static public function getOrderFromFrom(FormStateInterface $form_state) {
     if (!self::$order) {
       /**
        *

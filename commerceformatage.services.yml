@@ -2,3 +2,8 @@ services:
   commerceformatage.cartviews:
     class: Drupal\commerceformatage\Services\CartsView
     arguments: ['@commerce_cart.cart_provider', '@entity_type.manager', '@commerce_cart.cart_manager']
+  commerceformatage.payment_method_create:
+    class: Drupal\commerceformatage\EventSubscriber\PaymentMethodCreate
+    arguments: []
+    tags:
+      - { name: event_subscriber }

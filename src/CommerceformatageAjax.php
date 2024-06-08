@@ -42,7 +42,6 @@ class CommerceformatageAjax {
         $order = self::getOrderFromFrom($form_state);
         
         // On recupere la methode selectionner.
-        // Cela ne fonctionne pas, car il est modifié ailleurs.
         $order->set('payment_method', $payment_option->getId());
         // On Modifie directement le champs "payment_gateway".
         $order->set('payment_gateway', $payment_option->getPaymentGatewayId());

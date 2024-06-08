@@ -40,15 +40,16 @@ class CommerceformatageAjax {
          */
         $payment_option = $payment_options[$element['#value']];
         $order = self::getOrderFromFrom($form_state);
-        // On peut aussi mettre cela dans les meta-datas, mais elle n'est
-        // utilisé null part, donc on commente.
-        // $order->setData('payment_gateway_id',
-        // $payment_option->getPaymentGatewayId());
+        
+        // On recupere la methode selectionner.
+        // Cela ne fonctionne pas, car il est modifié ailleurs.
+        // $order->set('payment_method', $payment_option->getId());
+        
         // On Modifie directement le champs "payment_gateway".
         $order->set('payment_gateway', $payment_option->getPaymentGatewayId());
         $order->save();
-        // \Stephane888\Debug\debugLog::kintDebugDrupal($order->get('data')->getValue(),
-        // 'payment_method_callback_validate__get_datas', true);
+        // \Stephane888\Debug\debugLog::kintDebugDrupal($payment_gateway,
+        // 'payment_method_callback_validate__PaymentMethod', true);
       }
     }
   }
@@ -155,5 +156,4 @@ class CommerceformatageAjax {
     }
     return self::$order;
   }
-  
 }

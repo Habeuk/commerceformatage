@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * @file
@@ -8,6 +9,7 @@
  * This file is no longer required in Drupal 8.
  * @see https://www.drupal.org/node/2217931
  */
+
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\commerceformatage\CommerceformatageAjax;
 
@@ -133,8 +135,7 @@ function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$for
     $selected_variation = $form_state->get('selected_variation');
     /** @var \Drupal\commerce_product\Entity\ProductVariationInterface $selected_variation */
     $commerce_product_variation = $entityTypeManger->getStorage('commerce_product_variation')->load($selected_variation);
-  }
-  else {
+  } else {
     $commerce_product_variation = $form_state->get('product')->getDefaultVariation();
   }
   /**
@@ -143,7 +144,7 @@ function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$for
    */
   $LocalStockChecker = \Drupal::service('commerce_stock.local_stock_checker');
   $locations = \Drupal\commerce_stock_local\Entity\StockLocation::loadMultiple();
-  $InStock = $LocalStockChecker->getIsInStock($commerce_product_variation, $locations);
+  $InStock = $LocalStockChecker->getTotalAvailableStockLevel($commerce_product_variation, $locations) > 0;
   $form['commerce_product_variation_id'] = [
     '#type' => 'hidden',
     '#value' => $commerce_product_variation->id()
@@ -217,8 +218,7 @@ function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$for
       ]
     ];
     $form['contain-qty-add'] = $container;
-  }
-  else {
+  } else {
     $form['actions']['custom_submit'] = $custom_submit;
     if (!empty($form['actions']['submit']))
       unset($form['actions']['submit']);
@@ -362,15 +362,11 @@ function commerceformatage_theme_suggestions_input_alter(&$suggestions, array $v
   $element = $variables['element'];
   if (isset($element['#attributes']['data-twig-suggestion'])) {
     $suggestions[] = 'input__' . $element['#type'] . '_' . $element['#attributes']['data-twig-suggestion'];
-  }
-  else {
+  } else {
     $parents = !empty($element['#parents']) ? $element['#parents'] : null;
-    
+
     if ($parents && in_array('remove_button', $parents)) {
       $suggestions[] = 'input__' . $element['#type'] . '__remove_button';
     }
   }
 }
-
-
-

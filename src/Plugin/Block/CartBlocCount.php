@@ -131,7 +131,6 @@ class CartBlocCount extends commerceCartBlock {
       '#count' => '(' . $count . ')'
     ];
     if ($this->configuration['show_subtotal'] && $subTotals) {
-      $symboles = Currency::all();
       $build['content'][] = [
         '#type' => 'html_tag',
         '#tag' => 'span',
@@ -142,7 +141,7 @@ class CartBlocCount extends commerceCartBlock {
             'ml-2'
           ]
         ],
-        '#value' => Calculator::trim($subTotals->getNumber()) . ' ' . $symboles[$subTotals->getCurrencyCode()]['symbol']
+        '#value' => Calculator::trim($subTotals->getNumber()) . ' ' . $this->getNormalsymbol($subTotals->getCurrencyCode())
       ];
     }
     $build['#theme'] = 'commerceformatage_cart_bloc_count';
@@ -157,6 +156,24 @@ class CartBlocCount extends commerceCartBlock {
       ]
     ];
     return $build;
+  }
+  
+  /**
+   * --
+   */
+  protected function getNormalsymbol($currencyCode) {
+    $currency = \Drupal\commerce_price\Entity\Currency::load($currencyCode);
+    if ($currency) {
+      return $currency->getSymbol();
+    }
+    else {
+      $symboles = Currency::all();
+      if (!empty($symboles[$currencyCode]['symbol'])) {
+        return $symboles[$currencyCode]['symbol'];
+      }
+      else
+        return $currencyCode;
+    }
   }
   
   /**

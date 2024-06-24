@@ -138,13 +138,23 @@ function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$for
   else {
     $commerce_product_variation = $form_state->get('product')->getDefaultVariation();
   }
+  // On verifie si le produit est toujours definit comme etant toujours en
+  // stock.
   /**
    *
-   * @var \Drupal\commerce_stock_local\LocalStockChecker $LocalStockChecker
+   * @var \Drupal\commerce_stock\AlwaysInStockService $always_in_stock_service
    */
-  $LocalStockChecker = \Drupal::service('commerce_stock.local_stock_checker');
-  $locations = \Drupal\commerce_stock_local\Entity\StockLocation::loadMultiple();
-  $InStock = $LocalStockChecker->getTotalAvailableStockLevel($commerce_product_variation, $locations) > 0;
+  $always_in_stock_service = \Drupal::service("commerce_stock.always_in_stock_service");
+  $InStock = $always_in_stock_service->getStockChecker()->getIsAlwaysInStock($commerce_product_variation);
+  if (!$InStock) {
+    /**
+     *
+     * @var \Drupal\commerce_stock_local\LocalStockChecker $LocalStockChecker
+     */
+    $LocalStockChecker = \Drupal::service('commerce_stock.local_stock_checker');
+    $locations = \Drupal\commerce_stock_local\Entity\StockLocation::loadMultiple();
+    $InStock = $LocalStockChecker->getTotalAvailableStockLevel($commerce_product_variation, $locations) > 0;
+  }
   $form['commerce_product_variation_id'] = [
     '#type' => 'hidden',
     '#value' => $commerce_product_variation->id()

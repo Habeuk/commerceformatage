@@ -8,3 +8,4 @@ dependencies:
   - commerce_cart_api:commerce_cart_api
   - commerce_stock:commerce_stock
   - commerce_stock:commerce_checkout
+  - commerce_stock_local:commerce_stock_local

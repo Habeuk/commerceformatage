@@ -7,3 +7,4 @@ dependencies:
   - commerce:commerce
   - commerce_cart_api:commerce_cart_api
   - commerce_stock:commerce_stock
+  - commerce_stock:commerce_checkout

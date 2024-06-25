@@ -128,6 +128,7 @@ function commerceformatage_preprocess_page(&$variables) {
  * @param int $form_id
  */
 function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $configs = \Drupal::config("commerceformatage.settings")->getRawData();
   // Si l'utilisateur a selectionner un variante:
   if ($form_state->has('selected_variation')) {
     $entityTypeManger = \Drupal::entityTypeManager();
@@ -162,6 +163,7 @@ function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$for
   // disbled default submit
   $form['actions']['submit']['#access'] = false;
   // add custom submit (utilise ajax)
+  $css_add_to_cart = isset($configs['commerce_style']['css_add_to_cart']) ? $configs['commerce_style']['css_add_to_cart'] : 'btn btn-primary';
   $custom_submit = [
     '#theme' => 'commerceformatage_submit_commerce',
     '#attributes' => [
@@ -169,10 +171,9 @@ function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$for
         'd-flex',
         'justify-content-center',
         'align-items-center',
-        'btn',
-        'btn-primary',
         'w-100',
-        'commerceformatage-button-add-to-cart'
+        'commerceformatage-button-add-to-cart',
+        $css_add_to_cart
       ],
       'disabled' => !$InStock
     ],

@@ -11,6 +11,7 @@
  */
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\commerceformatage\CommerceformatageAjax;
+use Drupal\Core\Url;
 
 /**
  * Alteration du processus du cehckout.
@@ -129,6 +130,18 @@ function commerceformatage_preprocess_page(&$variables) {
  */
 function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $configs = \Drupal::config("commerceformatage.settings")->getRawData();
+  if (!empty($configs['commerce_by_now']['enable']))
+    $form['actions']['commerce_buy_now'] = [
+      '#type' => 'submit',
+      '#value' => t($configs['commerce_by_now']['text']),
+      '#weight' => 10,
+      '#submit' => [
+        '_commerceformatage_buy_now_submit'
+      ],
+      '#attributes' => [
+        'class' => explode(" ", $configs['commerce_by_now']['class'])
+      ]
+    ];
   // Si l'utilisateur a selectionner un variante:
   if ($form_state->has('selected_variation')) {
     $entityTypeManger = \Drupal::entityTypeManager();
@@ -198,12 +211,15 @@ function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$for
     $form['actions']['custom_submit'] = $custom_submit;
     $actions = $form['actions'];
     unset($form['actions']);
+    $css_container = isset($configs['commerce_style']['css_container']) ? $configs['commerce_style']['css_container'] : 'row no-gutters g-2 d-flex align-items-end';
+    $css_container_qty = isset($configs['commerce_style']['css_container_qty']) ? $configs['commerce_style']['css_container_qty'] : 'col-3';
+    $css_container_add_to_cart = isset($configs['commerce_style']['css_container_add_to_cart']) ? $configs['commerce_style']['css_container_add_to_cart'] : 'col';
     $container = [
       '#type' => 'html_tag',
       '#tag' => 'div',
       '#attributes' => [
         'class' => [
-          'row no-gutters d-flex align-items-end'
+          $css_container
         ]
       ],
       [
@@ -211,7 +227,7 @@ function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$for
         '#tag' => 'div',
         '#attributes' => [
           'class' => [
-            'col-3'
+            $css_container_qty
           ]
         ],
         $quantity
@@ -221,7 +237,7 @@ function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$for
         '#tag' => 'div',
         '#attributes' => [
           'class' => [
-            'col'
+            $css_container_add_to_cart
           ]
         ],
         $actions
@@ -381,4 +397,41 @@ function commerceformatage_theme_suggestions_input_alter(&$suggestions, array $v
       $suggestions[] = 'input__' . $element['#type'] . '__remove_button';
     }
   }
+}
+
+/**
+ * Adds an item to the shopping cart and redirects to the checkout page.
+ *
+ * @param array $form
+ *        Nested array of form elements that comprise the form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *        The form state.
+ */
+function _commerceformatage_buy_now_submit($form, FormStateInterface $form_state) {
+  $form_storage = $form_state->getStorage();
+  $product = $form_storage['product'];
+  
+  $product_variation_id = $product->get('variations')->target_id;
+  $store_id = $product->get('stores')->target_id;
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $variation_obj = $entity_type_manager->getStorage('commerce_product_variation')->load($product_variation_id);
+  $store = $entity_type_manager->getStorage('commerce_store')->load($store_id);
+  
+  $cart_provider = \Drupal::service('commerce_cart.cart_provider');
+  $cart = $cart_provider->getCart('default', $store);
+  
+  if (!$cart) {
+    $cart = $cart_provider->createCart('default', $store);
+  }
+  
+  $entity_type_manager->getStorage('commerce_order_item_type');
+  $cart_manager = \Drupal::service('commerce_cart.cart_manager');
+  
+  $user_input = $form_state->getUserInput();
+  $quantity = isset($user_input['quantity'][0]['value']) && $user_input['quantity'][0]['value'] > 0 ? $user_input['quantity'][0]['value'] : '1';
+  
+  $cart_manager->addEntity($cart, $variation_obj, $quantity);
+  
+  $url = Url::fromRoute('commerce_checkout.checkout');
+  $form_state->setRedirectUrl($url);
 }

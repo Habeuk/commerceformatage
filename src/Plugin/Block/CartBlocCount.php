@@ -145,7 +145,9 @@ class CartBlocCount extends commerceCartBlock {
           'class' => [
             'commerceformatage_cart_habeuk_open',
             'mr-0',
-            'ml-2'
+            'ml-2',
+            'price-value',
+            'd-flex'
           ]
         ],
         '#value' => Calculator::trim($subTotals->getNumber()) . ' ' . $this->getNormalsymbol($subTotals->getCurrencyCode())

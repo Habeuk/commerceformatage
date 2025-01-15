@@ -9,7 +9,8 @@ function template_preprocess_submit_commerce(&$vars) {
 
 function template_preprocess_commerceformatage_cart_bloc_count(&$vars) {
   // $vars += $vars['element'];
-  $vars['content'] = $vars['element']['content'];
+  $vars['content'] = $vars['element'];
+  $vars['attributes'] = $vars['element']['#attributes'];
 }
 
 function template_preprocess_commerceformatage_cart_bloc_count_svgback(&$vars) {

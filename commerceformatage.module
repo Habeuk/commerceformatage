@@ -355,6 +355,7 @@ function commerceformatage_theme() {
       'template_preprocess_commerceformatage_cart_bloc_count'
     ],
     'render element' => 'element',
+    'attributes' => null,
     'file' => 'commerceformatage.theme.inc'
   ];
   $hooks['commerceformatage_cart_bloc_count_svgback'] = [

@@ -58,7 +58,7 @@ class CartBlocCount extends commerceCartBlock {
     return [
       'show_subtotal' => false,
       'block_load_style_scss_js' => 'commerceformatage/cartfloat',
-      'class_content' => ''
+      'class_content' => 'd-flex justify-content-end align-items-center right_menu'
     ];
   }
   
@@ -97,13 +97,14 @@ class CartBlocCount extends commerceCartBlock {
     
     /** @var \Drupal\commerce_order\Entity\OrderInterface[] $carts */
     $carts = $this->cartProvider->getCarts();
-    $carts = array_filter($carts, function ($cart) {
-      /** @var \Drupal\commerce_order\Entity\OrderInterface $cart */
-      // There is a chance the cart may have converted from a draft order, but
-      // is still in session. Such as just completing check out. So we verify
-      // that the cart is still a cart.
-      return $cart->hasItems() && $cart->cart->value;
-    });
+    $carts = array_filter($carts,
+      function ($cart) {
+        /** @var \Drupal\commerce_order\Entity\OrderInterface $cart */
+        // There is a chance the cart may have converted from a draft order, but
+        // is still in session. Such as just completing check out. So we verify
+        // that the cart is still a cart.
+        return $cart->hasItems() && $cart->cart->value;
+      });
     
     $count = 0;
     $subTotals = 0;
@@ -126,6 +127,12 @@ class CartBlocCount extends commerceCartBlock {
     }
     
     $build = [];
+    $build['content']['#theme'] = 'commerceformatage_cart_bloc_count';
+    $build['content']['#attributes'] = [
+      'class' => [
+        $this->configuration['class_content']
+      ]
+    ];
     $build['content'][] = [
       '#theme' => 'commerceformatage_cart_bloc_count_svgback',
       '#count' => '(' . $count . ')'
@@ -144,12 +151,6 @@ class CartBlocCount extends commerceCartBlock {
         '#value' => Calculator::trim($subTotals->getNumber()) . ' ' . $this->getNormalsymbol($subTotals->getCurrencyCode())
       ];
     }
-    $build['#theme'] = 'commerceformatage_cart_bloc_count';
-    $build['#attributes'] = [
-      'class' => [
-        $this->configuration['class_content']
-      ]
-    ];
     $build['#cache'] = [
       'contexts' => [
         'cart'
@@ -188,5 +189,4 @@ class CartBlocCount extends commerceCartBlock {
     $library = $this->configuration['block_load_style_scss_js'];
     $this->LayoutgenentitystylesServices->addStyleFromModule($library, 'commerceformatage_cart_bloc_complet', 'default');
   }
-  
 }

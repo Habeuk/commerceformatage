@@ -38,15 +38,31 @@ class CartsView {
     $this->CartManager = $CartManager;
   }
   
-  function removeItemInCart($cart_id, $variant_id) {
+  /**
+   *
+   * @param integer $commerce_order_id
+   * @param integer $commerce_order_item_id
+   * @return array
+   */
+  function removeItemInCart($commerce_order_id, $commerce_order_item_id) {
     $carts = $this->getCarts();
     $ids = [];
-    foreach ($carts as $c_id => $cart) {
-      $items = $cart->getItems();
-      if ($items) {
-        foreach ($items as $p => $item) {
-          if ($item->getPurchasedEntityId() == $variant_id) {
-            $this->CartManager->removeOrderItem($cart, $item);
+    foreach ($carts as $cart) {
+      if ($cart->id() == $commerce_order_id) {
+        $items = $cart->getItems();
+        if ($items) {
+          foreach ($items as $item) {
+            /**
+             *
+             * @var $item \Drupal\commerce_order\Entity\OrderItem
+             */
+            if ($item->id() == $commerce_order_item_id) {
+              $this->CartManager->removeOrderItem($cart, $item);
+              $ids[] = [
+                'card_id' => $commerce_order_id,
+                'remove_order_item' => $commerce_order_item_id
+              ];
+            }
           }
         }
       }

@@ -89,13 +89,7 @@ class CommerceformatageController extends ControllerBase {
    */
   public function removeProduct(Request $request, $cart_id, $item_id) {
     $ids = $this->CartsView->removeItemInCart($cart_id, $item_id);
-    $configs = [
-      'hello',
-      $cart_id,
-      $item_id,
-      $ids
-    ];
-    return $this->reponse($configs);
+    return $this->reponse($ids);
   }
   
   /**
@@ -114,5 +108,4 @@ class CommerceformatageController extends ControllerBase {
     $reponse->setContent($configs);
     return $reponse;
   }
-  
 }

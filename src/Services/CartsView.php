@@ -130,7 +130,7 @@ class CartsView {
     //
     $urlCart = Url::fromRoute('commerce_cart.page');
     $urlCart->setOption('attributes', [
-      'class' => 'btn btn-link pr-0'
+      'class' => 'btn btn-link px-0'
     ]);
     
     if (!empty($carts)) {

@@ -77,8 +77,7 @@ class CartBlocCompletBlock extends commerceCartBlock {
       "#children" => $build,
       '#attributes' => [
         'class' => [
-          'commerceformatage_cart_habeuk',
-          'show0'
+          'commerceformatage_cart_habeuk'
         ]
       ]
     ];
@@ -103,5 +102,4 @@ class CartBlocCompletBlock extends commerceCartBlock {
     $library = $this->configuration['block_load_style_scss_js'];
     $this->LayoutgenentitystylesServices->addStyleFromModule($library, 'commerceformatage_cart_bloc_complet', 'default');
   }
-  
 }

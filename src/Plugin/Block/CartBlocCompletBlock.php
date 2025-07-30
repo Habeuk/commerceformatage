@@ -36,11 +36,6 @@ class CartBlocCompletBlock extends commerceCartBlock {
    */
   protected $CartsView;
   
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, CartProviderInterface $cart_provider, EntityTypeManagerInterface $entity_type_manager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $cart_provider, $entity_type_manager);
-    // \Drupal\Component\Utility\Xss::filterAdmin();
-  }
-  
   /**
    *
    * {@inheritdoc}
@@ -56,7 +51,7 @@ class CartBlocCompletBlock extends commerceCartBlock {
    *
    * {@inheritdoc}
    */
-  public function build() {
+  public function build(): array {
     $build[] = [
       '#theme' => 'commerceformatage_cart_svgclose'
     ];

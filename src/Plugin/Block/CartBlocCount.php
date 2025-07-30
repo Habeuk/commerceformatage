@@ -9,7 +9,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\layoutgenentitystyles\Services\LayoutgenentitystylesServices;
 use Drupal\commerce_cart\CartProviderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\commerceformatage\Services\CartsView;
 use KrepyshSpec\World\Currency;
 use Drupal\commerce_price\Calculator;
 
@@ -31,22 +30,11 @@ class CartBlocCount extends commerceCartBlock {
   
   /**
    *
-   * @var CartsView
-   */
-  protected $CartsView;
-  
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, CartProviderInterface $cart_provider, EntityTypeManagerInterface $entity_type_manager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $cart_provider, $entity_type_manager);
-  }
-  
-  /**
-   *
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
     $instance->LayoutgenentitystylesServices = $container->get('layoutgenentitystyles.add.style.theme');
-    $instance->CartsView = $container->get('commerceformatage.cartviews');
     return $instance;
   }
   
@@ -88,7 +76,7 @@ class CartBlocCount extends commerceCartBlock {
    *
    * {@inheritdoc}
    */
-  public function build() {
+  public function build(): array {
     $cachable_metadata = new CacheableMetadata();
     $cachable_metadata->addCacheContexts([
       'user',

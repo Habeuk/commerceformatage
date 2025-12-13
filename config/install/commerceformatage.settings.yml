@@ -1,0 +1,10 @@
+commerce:
+  text_add_to_cart: 'Add to cart'
+  checkout_button_text: 'To order'
+  cart_button_text: 'See cart'
+commerce_style:
+  css_add_to_cart: 'btn btn-primary d-flex justify-content-center align-items-center w-100'
+  css_container: 'row no-gutters g-2 d-flex align-items-end'
+  css_container_qty: col-3
+  css_container_add_to_cart: col
+commerce_buy_now: null

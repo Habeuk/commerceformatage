@@ -130,16 +130,16 @@ function commerceformatage_preprocess_page(&$variables) {
  */
 function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $configs = \Drupal::config("commerceformatage.settings")->getRawData();
-  if (!empty($configs['commerce_by_now']['enable']))
+  if (!empty($configs['commerce_buy_now']['enable']))
     $form['actions']['commerce_buy_now'] = [
       '#type' => 'submit',
-      '#value' => t($configs['commerce_by_now']['text']),
+      '#value' => t($configs['commerce_buy_now']['text']),
       '#weight' => 10,
       '#submit' => [
         '_commerceformatage_buy_now_submit'
       ],
       '#attributes' => [
-        'class' => explode(" ", $configs['commerce_by_now']['class'])
+        'class' => explode(" ", $configs['commerce_buy_now']['class'])
       ]
     ];
   // Si l'utilisateur a selectionner un variante:
@@ -181,10 +181,6 @@ function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$for
     '#theme' => 'commerceformatage_submit_commerce',
     '#attributes' => [
       'class' => [
-        'd-flex',
-        'justify-content-center',
-        'align-items-center',
-        'w-100',
         'commerceformatage-button-add-to-cart',
         $css_add_to_cart
       ],

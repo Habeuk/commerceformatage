@@ -1,0 +1,20 @@
+commerceformatage.settings:
+  type: config_object
+  label: 'Commerce Formatage settings'
+  mapping:
+    commerce:
+      type: mapping
+      label: 'Commerce labels'
+      mapping:
+        text_add_to_cart:
+          type: label
+          label: 'Add to cart label'
+        checkout_button_text:
+          type: label
+          label: 'Checkout label'
+        cart_button_text:
+          type: label
+          label: 'View cart label'
+        empty_stock_button_text:
+          type: label
+          label: 'Out of stock label'

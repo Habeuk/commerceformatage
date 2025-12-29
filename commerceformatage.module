@@ -156,10 +156,10 @@ function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$for
   // stock.
   /**
    *
-   * @var \Drupal\commerce_stock\AlwaysInStockService $always_in_stock_service
+   * @var \Drupal\commerce_stock_local\LocalStockChecker $always_in_stock_service
    */
-  $always_in_stock_service = \Drupal::service("commerce_stock.always_in_stock_service");
-  $InStock = $always_in_stock_service->getStockChecker()->getIsAlwaysInStock($commerce_product_variation);
+  $always_in_stock_service = \Drupal::service("commerce_stock.local_stock_checker");
+  $InStock = $always_in_stock_service->getIsAlwaysInStock($commerce_product_variation);
   if (!$InStock) {
     /**
      *
@@ -173,9 +173,11 @@ function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$for
     '#type' => 'hidden',
     '#value' => $commerce_product_variation->id()
   ];
+  
   // disbled default submit
   $form['actions']['submit']['#access'] = false;
   // add custom submit (utilise ajax)
+  $aad_to_cart_text = !empty($configs['commerce']['text_add_to_cart']) ? t($configs['commerce']['text_add_to_cart']) : $form['actions']['submit']['#value'];
   $css_add_to_cart = isset($configs['commerce_style']['css_add_to_cart']) ? $configs['commerce_style']['css_add_to_cart'] : 'btn btn-primary';
   $custom_submit = [
     '#theme' => 'commerceformatage_submit_commerce',
@@ -186,7 +188,7 @@ function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$for
       ],
       'disabled' => !$InStock
     ],
-    '#value' => $InStock ? $form['actions']['submit']['#value'] : t("Coming soon")
+    '#value' => $InStock ? $aad_to_cart_text : $configs['commerce']['empty_stock_button_text']
   ];
   /**
    *

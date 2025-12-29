@@ -12,16 +12,14 @@ class PaymentMethodCreate implements EventSubscriberInterface {
    * @var \Drupal\commerce_payment\Entity\PaymentMethodInterface
    */
   protected $paymentMethod;
-
-  function CreatePaymentMethode($event) {
-    \Drupal::messenger()->addStatus(" commerceformatage::Run event subscriber ");
-    \Stephane888\Debug\debugLog::kintDebugDrupal($event, 'CreatePaymentMethode', true);
-    $this->paymentMethod = $event->getPaymentMethod();
+  
+  function CreatePaymentMethode(\Drupal\commerce_stripe\Event\PaymentIntentCreateEvent $event) {
+    $this->paymentMethod = $event->getPayment();
     // On desactive la reutilisation de la methode de paiement.
-    $this->paymentMethod->setReusable(FALSE);
-    // dd($paymentMethod);
+    if ($this->paymentMethod)
+      $this->paymentMethod->setReusable(FALSE);
   }
-
+  
   /**
    *
    * {@inheritdoc}

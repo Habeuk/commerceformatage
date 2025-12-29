@@ -69,6 +69,14 @@ class SettingsForm extends ConfigFormBase {
       '#size' => 64,
       '#default_value' => $configs['commerce']['cart_button_text'] ?? 'View cart'
     ];
+    $form['commerce']['empty_stock_button_text'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('View cart empty stock button label'),
+      '#description' => $this->t('Text displayed on the "View cart" button when the product is out of stock.'),
+      '#maxlength' => 250,
+      '#size' => 64,
+      '#default_value' => $configs['commerce']['empty_stock_button_text'] ?? 'Out of stock'
+    ];
     
     $form['commerce_style'] = [
       '#type' => 'details',

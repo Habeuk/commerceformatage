@@ -177,6 +177,7 @@ function commerceformatage_form_commerce_order_item_add_to_cart_form_alter(&$for
   // disbled default submit
   $form['actions']['submit']['#access'] = false;
   // add custom submit (utilise ajax)
+  
   $aad_to_cart_text = !empty($configs['commerce']['text_add_to_cart']) ? t($configs['commerce']['text_add_to_cart']) : $form['actions']['submit']['#value'];
   $css_add_to_cart = isset($configs['commerce_style']['css_add_to_cart']) ? $configs['commerce_style']['css_add_to_cart'] : 'btn btn-primary';
   $custom_submit = [
